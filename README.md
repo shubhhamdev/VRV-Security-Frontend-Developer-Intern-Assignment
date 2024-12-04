@@ -20,11 +20,6 @@ This project is a responsive **Admin Dashboard** built with **React** and **Vite
 - **CSS** for custom styling
 - **LocalStorage** for data persistence
 
-## File Structure
-### `/src`
-- `App.jsx`: Main application logic including user management and theme handling.
-- `index.css`: Custom CSS for light and dark themes, as well as table and button styling.
-
 ### CSS Highlights
 - **Themed Styles**:
   - `.light-theme` and `.dark-theme` classes for global theme-based styles.
