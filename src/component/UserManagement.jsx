@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "../index.css";
 import {
   Table,
@@ -21,6 +21,8 @@ import {
   Switch,
 } from "@mui/material";
 
+
+
 const App = () => {
   // Function to fetch users from localStorage
   const getStoredUsers = () => {
@@ -42,11 +44,14 @@ const App = () => {
   ];
 
   // States
-  const [users, setUsers] = useState(() => [...initialUsers, ...getStoredUsers()]);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({ id: null, name: "", date: "", role: "User", status: "Active", permissions: [] });
-  const [editMode, setEditMode] = useState(false);
-  const [theme, setTheme] = useState(getStoredTheme); // Get the initial theme from localStorage
+  // States
+const [users, setUsers] = useState(() => [...initialUsers, ...getStoredUsers()]);
+const [dialogOpen, setDialogOpen] = useState(false);
+const [formData, setFormData] = useState({ id: null, name: "", date: "", role: "User", status: "Active", permissions: [] });
+const [editMode, setEditMode] = useState(false);
+const [theme, setTheme] = useState(getStoredTheme);
+const [errors, setErrors] = useState({}); // Initialize errors state
+
 
   const permissionsList = ["Read", "Write", "Delete"];
 
@@ -75,7 +80,9 @@ const App = () => {
   const handleDialogClose = () => {
     setDialogOpen(false);
     setFormData({ id: null, name: "", date: "", role: "User", status: "Active", permissions: [] });
+    setErrors({}); // Clear errors
   };
+  
 
   // Update form data
   const handleChange = (e) => {
@@ -94,7 +101,17 @@ const App = () => {
   };
 
   // Save new user or update existing user
-  const handleSave = () => {
+ // Save new user or update existing user
+const handleSave = () => {
+    // Validation logic
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required.";
+    if (!formData.date) newErrors.date = "Date is required.";
+    if (!formData.role) newErrors.role = "Role is required.";
+  
+    setErrors(newErrors); // Set errors to the state
+    if (Object.keys(newErrors).length > 0) return; // Stop if there are validation errors
+  
     if (editMode) {
       setUsers(prev => prev.map(user => user.id === formData.id ? formData : user));
     } else {
@@ -102,6 +119,7 @@ const App = () => {
     }
     handleDialogClose();
   };
+  
 
   // Delete user
   const handleDelete = (id) => {
@@ -167,36 +185,75 @@ const App = () => {
       </TableContainer>
 
       {/* Dialog */}
-      <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>{editMode ? "Edit User" : "Add User"}</DialogTitle>
-        <DialogContent>
-          <TextField autoFocus margin="dense" label="Name" name="name" value={formData.name} onChange={handleChange} fullWidth />
-          <TextField margin="dense" label="Date" name="date" value={formData.date} onChange={handleChange} type="date" fullWidth InputLabelProps={{ shrink: true }} />
-          <TextField margin="dense" label="Role" name="role" value={formData.role} onChange={handleChange} select fullWidth>
-            <MenuItem value="Admin">Admin</MenuItem>
-            <MenuItem value="User">User</MenuItem>
-          </TextField>
-          <TextField margin="dense" label="Status" name="status" value={formData.status} onChange={handleChange} select fullWidth>
-            <MenuItem value="Active">Active</MenuItem>
-            <MenuItem value="Inactive">Inactive</MenuItem>
-          </TextField>
+ <Dialog open={dialogOpen} onClose={handleDialogClose}>
+  <DialogTitle>{editMode ? "Edit User" : "Add User"}</DialogTitle>
+  <DialogContent>
+    <TextField
+      autoFocus
+      margin="dense"
+      label="Name"
+      name="name"
+      value={formData.name}
+      onChange={handleChange}
+      fullWidth
+      error={!!errors.name}
+      helperText={errors.name}
+    />
+    <TextField
+      margin="dense"
+      label="Date"
+      name="date"
+      value={formData.date}
+      onChange={handleChange}
+      type="date"
+      fullWidth
+      InputLabelProps={{ shrink: true }}
+      error={!!errors.date}
+      helperText={errors.date}
+    />
+    <TextField
+      margin="dense"
+      label="Role"
+      name="role"
+      value={formData.role}
+      onChange={handleChange}
+      select
+      fullWidth
+      error={!!errors.role}
+      helperText={errors.role}
+    >
+      <MenuItem value="Admin">Admin</MenuItem>
+      <MenuItem value="User">User</MenuItem>
+    </TextField>
+    <TextField
+      margin="dense"
+      label="Status"
+      name="status"
+      value={formData.status}
+      onChange={handleChange}
+      select
+      fullWidth
+    >
+      <MenuItem value="Active">Active</MenuItem>
+      <MenuItem value="Inactive">Inactive</MenuItem>
+    </TextField>
 
-          {/* Permissions */}
-          <FormGroup>
-            {permissionsList.map((perm) => (
-              <FormControlLabel
-                key={perm}
-                control={<Checkbox checked={formData.permissions.includes(perm)} onChange={() => handlePermissionChange(perm)} name={perm} />}
-                label={perm}
-              />
-            ))}
-          </FormGroup>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button onClick={handleSave}>{editMode ? "Save" : "Add"}</Button>
-        </DialogActions>
-      </Dialog>
+    <FormGroup>
+      {permissionsList.map((perm) => (
+        <FormControlLabel
+          key={perm}
+          control={<Checkbox checked={formData.permissions.includes(perm)} onChange={() => handlePermissionChange(perm)} />}
+          label={perm}
+        />
+      ))}
+    </FormGroup>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleDialogClose}>Cancel</Button>
+    <Button onClick={handleSave}>{editMode ? "Save" : "Add"}</Button>
+  </DialogActions>
+</Dialog>
+
     </div>
   );
 };
