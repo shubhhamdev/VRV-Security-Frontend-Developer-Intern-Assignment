@@ -2,14 +2,28 @@
 
 This project is a responsive **Admin Dashboard** built with **React** and **Vite**, featuring a dark and light mode toggle, user management functionalities, and persistent state using `localStorage`.
 
+To add validation details to your **Role-Based Access Control (RBAC) UI** documentation, here’s an updated section under **Features**:
+
+---
+
 ## Features
-- **Add, Edit, and Delete Users**:
-  Manage users with fields like name, role, date, permissions, and status.
+
+- **Add, Edit, and Delete Users**:  
+  Manage users with fields like **name**, **role**, **date**, **permissions**, and **status**.
+
+- **Form Validation**:  
+  Built-in validation ensures accurate and complete input during user creation or editing:
+  - **Name**: Required field; cannot be left empty.
+  - **Date**: Must be selected; cannot be empty.
+  - **Role**: Mandatory; defaults to "User" if not specified.
+  - **Permissions**: Users can choose multiple permissions; no validation required for permissions.
   
-- **Dynamic Theme Toggle**:
+  Errors are displayed inline, providing feedback to guide the user.
+
+- **Dynamic Theme Toggle**:  
   Switch between **Light Mode** and **Dark Mode**, with the selected theme persisting across page reloads.
 
-- **LocalStorage Integration**:
+- **LocalStorage Integration**:  
   - Newly added or edited users are stored in the browser’s local storage.
   - Previously saved users and the selected theme are loaded on refresh.
 
